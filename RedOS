@@ -8,9 +8,12 @@ function setColors(backColor, textColor)
 	term.setTextColor(textColor)
 end
 
-function printY(text, yPos)
-	term.setCursorPos(1, yPos)
+function printY(text, yLoc2)
+	term.setCursorPos(1, yLoc2)
 	print(text)
+	if yLoc2 == yPos+1 then
+		yPos = yPos+1
+	end
 end
 
 function centerPrint(text, yPos)
@@ -19,18 +22,80 @@ function centerPrint(text, yPos)
   write(text)
 end
 
+function writeY(text, yLoc)
+	term.setCursorPos(1, yLoc)
+	write(text)
+	if yLoc == yPos+1 then
+		yPos = yPos+1
+	end
+end
+
 --Main Code
 setColors(colors.white, colors.cyan)
 term.clear()
-centerPrint("Welcome To RedOS!", 1)
+centerPrint("Welcome To RedOS Login!", 1)
 paintutils.drawLine(1, 2, w, 2, colors.blue)
 setColors(colors.white, colors.cyan)
-centerPrint("RedOS Desktop", 8)
+centerPrint("RedOS Login System", 8)
 sleep(2)
-printY("RedOS Shell", 2)
 term.setCursorPos(1,3)
-write("> ")
+printY("RedOS Login", 2)
+printY("Username", 3)
+writeY("> ", yPos+1)
 input = read()
-printY("Feature not yet added!", yPos+1)
-
-
+if fs.exists(".redos/login/user") then
+	h = fs.open(".redos/login/user", "r")
+	userName = h.readAll()
+	h.close()
+	if input == userName then
+		term.setCursorPos(1,3)
+		print("Password")
+		yPos = yPos-1
+		term.setCursorPos(1,4)
+		term.clearLine()
+		writeY("> ", yPos+1)
+		input2 = read("*")
+		if fs.exists(".redos/login/pass") then
+			h = fs.open(".redos/login/pass", "r")
+			password = h.readAll()
+			h.close()
+			if input2 == password then
+				printY("Login Confirmed! Loading desktop...", yPos+1)
+				sleep(2)
+				if fs.exists(".redos/os/desktop") then
+					shell.run(".redos/os/desktop")
+				else
+					term.setBackgroundColor(colors.black)
+					term.clear()
+					term.setCursorPos(1,1)
+					error("desktop: OS corrupt; destop file not present")
+				end
+			else
+				printY("Password incorrect!", yPos+1)
+			end
+		end
+	else
+		printY("Username incorrect!", yPos+1)
+	end
+else
+	if not fs.exists(".redos/login") then
+		fs.makeDir(".redos")
+		fs.makeDir(".redos/login")
+	end
+	h = fs.open(".redos/login/user", "w")
+	printY("Creating new user file", yPos+1)
+	h.write(input)
+	h.close()
+	printY("Type in your new password", yPos+1)
+	writeY("> ", yPos+1)
+	newP = read("*")
+	h = fs.open(".redos/login/pass", "w")
+	h.write(newP)
+	h.close()
+	term.setCursorPos(1,8)
+	term.clearLine()
+	printY("Password File generated!", yPos+1)
+	printY("OS rebooting...", yPos+1)
+	sleep(2)
+	os.reboot()
+end
