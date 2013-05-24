@@ -17,6 +17,20 @@ function printY(text, yLoc2)
 	end
 end
 
+function checkForUpdates(updateUrl)
+	for i = 1, 3 do
+		local response = http.get(updateUrl)
+		if response then
+			local data = response.readAll()
+			if data ~= currentVersion then
+				centerPrint("Updating OS...", 1)
+				sleep(2)
+				shell.run("/installer")
+			end
+		end
+	end
+end
+
 function centerPrint(text, yPos)
   w, h = term.getSize()
   term.setCursorPos(math.floor(w-text:len())/2, yPos)
@@ -56,35 +70,9 @@ end
 w, h = term.getSize()
 setColors(colors.white, colors.cyan)
 term.clear()
-centerPrint("Checking for updates...", 1)
-paintutils.drawLine(1, 2, w, 2, colors.blue)
-downloadFiles("https://raw.github.com/redstonefreak589/redos/master/version", ".redos/os/version")
-h = fs.open(".redos/os/version", "r")
-versionNumber = h.readAll()
-currentVersionNumber = tostring(versionNumber)
-h.close()
-if currentVersionNumber ~= currentVersion then
-	term.setCursorPos(1,1)
-	term.clearLine()
-	centerPrint("New update available! Update now?", 1)
-	event, key = os.pullEvent("key")
-	if key == 21 then
-		fs.delete(".redos/os/version")
-		shell.run("/installer")
-	elseif key == 49 then
-		term.setCursorPos(1,1)
-		term.clearLine()
-		fs.delete(".redos/os/version")
-	end
-else
-	term.setCursorPos(1,1)
-	term.clearLine()
-	centerPrint("No updates avaible", 1)
-	term.setCursorPos(1,1)
-	term.clearLine()
-end
-
 centerPrint("Welcome To RedOS Login!", 1)
+paintutils.drawLine(1, 2, w, 2, colors.blue)
+checkForUpdates("https://raw.github.com/redstonefreak589/redos/master/version")
 setColors(colors.white, colors.cyan)
 centerPrint("RedOS Login System", 8)
 sleep(2)
