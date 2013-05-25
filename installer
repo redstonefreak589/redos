@@ -79,6 +79,8 @@ if not fs.exists(".redos") then
 	end
 end
 parallel.waitForAny(function() downloadFiles("https://raw.github.com/redstonefreak589/redos/master/RedOS", ".redos/os/RedOS") end, function() load(9) end)
+parallel.waitForAny(function() downloadFiles("https://raw.github.com/redstonefreak589/redos/master/Browser", ".redos/programs/browser") end, function load(9) end)
+parallel.waitForAny(function() downloadFiles("https://raw.github.com/redstonefreak589/redos/master/desktop", ".redos/os/desktop") end, function() load(9) end)
 sleep(2)
 term.setCursorPos(1,4)
 term.clearLine()
