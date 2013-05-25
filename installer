@@ -1,0 +1,102 @@
+--Setting the colors
+term.setBackgroundColor(colors.white)
+term.setTextColor(colors.cyan)
+term.clear()
+term.setCursorPos(1,1)
+loading = "yes"
+installing = "true"
+--Functions
+local function centerPrint(text)
+  local x, y = term.getSize()
+  local x2, y2 = term.getCursorPos()
+  term.setCursorPos(math.ceil((x/2) -(text:len()/2)), y2)
+  write(text)
+  term.setCursorPos(1,1)
+end
+local function downloadFiles(url, path)
+for i = 1, 3 do
+  local response = http.get(url)
+  if response then
+   local data = response.readAll()
+   if path then
+    local f = io.open(path, "w")
+    f:write(data)
+    f:close()
+    sleep(2)
+    installing = "false"
+    centerPrint("Download success!")
+   end
+   return true
+  end
+end
+centerPrint(error("download: Download Failed"))
+return false
+end
+
+
+local function load(yLoc)
+  w, h = term.getSize()
+  local x2, y2 = term.getCursorPos()
+  loc = math.ceil(w/2)
+  loc2 = yLoc
+  while loading == "yes" do
+  term.setCursorPos(loc-3, loc2)
+  print("|O---|")
+  term.setCursorPos(loc-3, loc2)
+  sleep(0.5)
+  print("|-O--|")
+  term.setCursorPos(loc-3, loc2)
+  sleep(0.5)
+  print("|--O-|")
+  term.setCursorPos(loc-3, loc2)
+  sleep(0.5)
+  print("|---O|")
+  term.setCursorPos(loc-3, loc2)
+  sleep(0.5)
+  print("|--O-|")
+  term.setCursorPos(loc-3, loc2)
+  sleep(0.5)
+  print("|-O--|")
+  term.setCursorPos(loc-3, loc2)
+  sleep(0.5)
+ end
+end
+--Main Code
+w, h = term.getSize()
+centerPrint("RedOS Installer")
+paintutils.drawLine(1, 2, w, 2, colors.blue)
+term.setTextColor(colors.cyan)
+term.setBackgroundColor(colors.white)
+term.setCursorPos(1, 4)
+centerPrint("Installing Files....")
+if not fs.exists(".redos") then
+	fs.makeDir(".redos")
+	if not fs.exists(".redos/os") then
+		fs.makeDir(".redos/os")
+	end
+	if not fs.exists(".redos/programs" then
+		fs.makeDir(".redos/programs")
+	end
+end
+parallel.waitForAny(function() downloadFiles("https://raw.github.com/redstonefreak589/redos/master/RedOS", ".redos/os/RedOS") end, function() load(9) end)
+sleep(2)
+term.setCursorPos(1,4)
+term.clearLine()
+centerPrint("Do you want to run RedOS on startup? Y | N")
+event, key = os.pullEvent("key")
+if key == 21 then
+	if fs.exists("/startup.old") then
+		fs.delete("/startup.old")
+	end
+	if fs.exists("/startup") then
+		fs.move("/startup", "/startup.old")
+	end
+	downloadFiles("https://raw.github.com/redstonefreak589/redos/master/startup", "startup")
+	term.setBackgroundColor(colors.black)
+	term.setTextColor(colors.white)
+	os.reboot()
+elseif key == 49 then
+	term.setBackgroundColor(colors.black)
+	term.setTextColor(colors.white)
+	os.reboot()
+end
