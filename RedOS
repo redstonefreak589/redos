@@ -30,6 +30,9 @@ function checkForUpdates(updateUrl)
 				centerPrint("Updating OS...", 1)
 				paintutils.drawLine(1, 2, w, 2, colors.blue)
 				sleep(2)
+				if not fs.exists("/installer") then
+					downloadFiles("https://raw.github.com/redstonefreak589/redos/master/installer", "/installer")
+				end
 				shell.run("/installer")
 			end
 		end
