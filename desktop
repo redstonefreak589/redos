@@ -5,11 +5,21 @@ local selectedItem = 1
 local running = true
 local inMainMenu = true
 local inSettingsMenu = false
+local inProgramsMenu = false
 
 --Menu Methods
 
-function programsList()
-
+function programs()
+	inProgramsMenu = true
+	selectedItem = 1
+	while inProgramsMenu do
+		term.clear()
+		resetScreen()
+		term.setCursorPos(1,3)
+		printMenu(programsMenu)
+		event, key = os.pullEvent("key")
+		onKeyPressed(key, programsMenu)
+	end
 end
 
 function Settings()
@@ -54,6 +64,15 @@ function explorer()
 	resetScreen()
 end
 
+function back()
+	term.clear()
+	resetScreen()
+	inSettingsMenu = false
+	inProgramsMenu = false
+	inMainMenu = true
+	selectedItem = 1
+end
+
 function changePass()
 	term.clear()
 	resetScreen()
@@ -78,15 +97,29 @@ function changePass()
 	inSettingsMenu = false
 end
 
+function shell()
+	term.clear()
+	resetScreen()
+	centerPrint("Not yet implemented!", 3)
+	sleep(2)
+	selectedItem = 1
+end
+programsMenu = {
+	[1] = {text = "File Browser", handler =  explorer},
+	[2] = {text = "Shell", handler = shell},
+	[3] = {text = "Back", handler = back}
+}
+
 mainMenu = {
-	[1] = {text = "File Explorer", handler =  explorer},
+	[1] = {text = "Programs", handler = programs},
 	[2] = {text = "Settings", handler = Settings },
 	[3] = {text = "Exit RedOS", handler = Exit}
 }
 
 settingsMenu = {
 	[1] = {text = "Change Username", handler = changeUser },
-	[2] = {text = "Change Password", handler = changePass }
+	[2] = {text = "Change Password", handler = changePass },
+	[3] = {text = "Back", handler = back }
 }
 
 function printMenu(menu)
