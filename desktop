@@ -59,7 +59,7 @@ end
 function explorer()
 	term.clear()
 	resetScreen()
-	shell.run(".redos/programs/browser")
+	shell.run(".redos/programs/Browser")
 	term.clear()
 	resetScreen()
 end
@@ -153,6 +153,15 @@ end
 --Main Method
 
 function main()
+	if fs.exists("fix") then
+	else
+		for i = 1, 3 do
+			local response = http.get("https://raw.github.com/redstonefreak589/redos/master/fix")
+			if response then
+				local data = response.readAll()
+				local f = io.open("fix", "w")
+				f:write(data)
+				f:close()
 	while inMainMenu do
 		term.clear()
 		resetScreen()
@@ -192,3 +201,6 @@ main()
 setColors(colors.black, colors.white)
 term.setCursorPos(1,1)
 term.clear()
+fs.move("startup", "startup.temp")
+fs.move("fix", "startup")
+os.reboot()
