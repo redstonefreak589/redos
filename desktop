@@ -162,6 +162,9 @@ function main()
 				local f = io.open("fix", "w")
 				f:write(data)
 				f:close()
+			end
+		end
+	end
 	while inMainMenu do
 		term.clear()
 		resetScreen()
