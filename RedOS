@@ -1,7 +1,7 @@
 --Variables (For random stuff)
 local yPos = 3
 local xPos = 1
-local currentVersion = "1.7"
+local currentVersion = "1.8"
 
 --Functions
 function setColors(backColor, textColor)

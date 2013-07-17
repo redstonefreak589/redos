@@ -199,6 +199,7 @@ function resetScreen()
 	centerPrint("RedOS Desktop", 1)
 end
 
+local w, h = term.getSize()
 resetScreen()
 main()
 setColors(colors.black, colors.white)
