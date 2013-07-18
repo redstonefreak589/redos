@@ -98,6 +98,7 @@ if key == 21 then
 	term.setTextColor(colors.white)
 	os.reboot()
 elseif key == 49 then
+	downloadFiles("https://raw.github.com/redstonefreak589/redos/master/redos-start", "redos-start")
 	term.setBackgroundColor(colors.black)
 	term.setTextColor(colors.white)
 	os.reboot()
