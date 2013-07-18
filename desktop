@@ -4,8 +4,11 @@ local termWidth, termHeight = term.getSize()
 local selectedItem = 1
 local running = true
 local inMainMenu = true
+local inRednetMenu = false
 local inSettingsMenu = false
 local inProgramsMenu = false
+local modemStatus = false
+local modemSide = "top"
 
 --Menu Methods
 
@@ -20,6 +23,7 @@ function programs()
 		event, key = os.pullEvent("key")
 		onKeyPressed(key, programsMenu)
 	end
+	return true
 end
 
 function Settings()
@@ -33,6 +37,21 @@ function Settings()
 		event, key = os.pullEvent("key")
 		onKeyPressed(key, settingsMenu)
 	end
+	return true
+end
+
+function rednetMenu()
+	inRednetMenu = true
+	selectedItem = 1
+	while inRednetMenu do
+		term.clear()
+		resetScreen()
+		term.setCursorPos(1,3)
+		printMenu(rednetMenu)
+		event, key = os.pullEvent("key")
+		onKeyPressed(key, rednetMenu)
+	end
+	return true
 end
 
 function Exit()
@@ -42,6 +61,7 @@ function Exit()
 	sleep(2)
 	term.clear()
 	inMainMenu = false
+	return true
 end
 
 function changeUser()
@@ -54,6 +74,7 @@ function changeUser()
 	h.close()
 	selectedItem = 1
 	inSettingsMenu = false
+	return true
 end
 
 function explorer()
@@ -62,6 +83,7 @@ function explorer()
 	shell.run(".redos/programs/Browser")
 	term.clear()
 	resetScreen()
+	return true
 end
 
 function back()
@@ -69,8 +91,10 @@ function back()
 	resetScreen()
 	inSettingsMenu = false
 	inProgramsMenu = false
+	inRednetMenu = false
 	inMainMenu = true
 	selectedItem = 1
+	return true
 end
 
 function changePass()
@@ -95,30 +119,136 @@ function changePass()
 	end
 	selectedItem = 1
 	inSettingsMenu = false
+	return true
 end
 
-function shell()
+function shellRun()
 	term.clear()
 	resetScreen()
 	centerPrint("Not yet implemented!", 3)
 	sleep(2)
 	selectedItem = 1
+	return true
 end
+
+function resetScreen2()
+	local w, h = term.getSize()
+	for i = 1, h do
+		term.setCursorPos(1, h)
+		term.clearLine()
+	end
+	centerPrint("RedOS Desktop", 1)
+	return true
+end
+
+function writeY(text, yLoc)
+	term.setCursorPos(1, yLoc)
+	write(text)
+	return true
+end
+
+function changeMSide()
+	resetScreen()
+	term.setCursorPos(1,3)
+	term.clearLine()
+	term.setCursorPos(1,4)
+	term.clearLine()
+	term.setCursorPos(1,5)
+	term.clearLine()
+	printY("Type in the side you wish to change the modem to", 3)
+	writeY("> ", 4)
+	input = read()
+	if input == "top" or input == "bottom" or input == "left" or input == "right" or input == "front" or input == "back" then
+		modemSide = input
+	else
+		resetScreen()
+		term.setCursorPos(1,3)
+		term.clearLine()
+		term.setCursorPos(1,4)
+		term.clearLine()
+		term.setCursorPos(1,5)
+		printY("Invalid side!", 3)
+		sleep(2)
+		changeMSide()
+	end
+	selectedItem = 1
+	return true
+end
+
+function toggleMStatus()
+	if modemStatus == false then
+		resetScreen()
+		term.setCursorPos(1,3)
+		term.clearLine()
+		term.setCursorPos(1,4)
+		term.clearLine()
+		term.setCursorPos(1,5)
+		term.clearLine()
+		if peripheral.isPresent(modemSide) and peripheral.getType(modemSide) == "modem" then
+			printY("Toggling modem ON", 3)
+			modemStatus = true
+			rednet.open(modemSide)
+			sleep(2)
+		else
+			printY("No modem on that side! Try placing one :P", 3)
+			sleep(2)
+		end
+	elseif modemStatus == true then
+		resetScreen()
+		term.setCursorPos(1,3)
+		term.clearLine()
+		term.setCursorPos(1,4)
+		term.clearLine()
+		term.setCursorPos(1,5)
+		term.clearLine()
+		if peripheral.isPresent(modemSide) and peripheral.getType(modemSide) == "modem" then
+			printY("Toggling modem OFF", 3)
+			modemStatus = false
+			rednet.close(modemSide)
+			sleep(2)
+		else
+			printY("No modem on that side! Try placing one :P", 3)
+			sleep(2)
+		end
+	else
+		resetScreen()
+		term.setCursorPos(1,3)
+		term.clearLine()
+		term.setCursorPos(1,4)
+		term.clearLine()
+		term.setCursorPos(1,5)
+		term.clearLine()
+		printY("The variable 'modemStatus' has been tampered with! Defaulting to 'OFF'", 3)
+		modemStatus = false
+		rednet.close(modemSide)
+		sleep(2)
+	end
+	selectedItem = 1
+	return true
+end
+
 programsMenu = {
 	[1] = {text = "File Browser", handler =  explorer},
-	[2] = {text = "Shell", handler = shell},
+	[2] = {text = "Shell", handler = shellRun},
 	[3] = {text = "Back", handler = back}
 }
 
 mainMenu = {
 	[1] = {text = "Programs", handler = programs},
 	[2] = {text = "Settings", handler = Settings },
-	[3] = {text = "Exit RedOS", handler = Exit}
+	[3] = {text = "Rednet", handler = rednetMenu },
+	[4] = {text = "Exit RedOS", handler = Exit}
 }
 
 settingsMenu = {
 	[1] = {text = "Change Username", handler = changeUser },
 	[2] = {text = "Change Password", handler = changePass },
+	[3] = {text = "Back", handler = back }
+}
+
+rednetMenu = {
+	[1] = {text = "Change Side", handler = changeMSide },
+	[2] = {text = "Toggle On/Off", handler = toggleMStatus },
 	[3] = {text = "Back", handler = back }
 }
 
@@ -130,10 +260,12 @@ function printMenu(menu)
 			print("  "..menu[i].text)
 		end
 	end
+	return true
 end
 
 function onItemSelected(menu)
 	menu[selectedItem].handler()
+	return true
 end
 
 function onKeyPressed(key, menu)
@@ -148,6 +280,7 @@ function onKeyPressed(key, menu)
 			selectedItem = selectedItem + 1
 		end
 	end
+	return true
 end
 
 --Main Method
@@ -174,29 +307,34 @@ function main()
 		event, key = os.pullEvent("key")
 		onKeyPressed(key, mainMenu)
 	end
+	return true
 end
 
 --Functions
 function setColors(backColor, textColor)
 	term.setBackgroundColor(backColor)
 	term.setTextColor(textColor)
+	return true
 end
 
 function centerPrint(text, yPos)
   w, h = term.getSize()
   term.setCursorPos(math.floor(w-text:len())/2, yPos)
   print(text)
+  return true
 end
 
 function printY(text, yLoc2)
 	term.setCursorPos(1, yLoc2)
 	write(text)
+	return true
 end
 
 function resetScreen()
 	paintutils.drawLine(1, 2, w, 2, colors.blue)
 	setColors(colors.white, colors.cyan)
 	centerPrint("RedOS Desktop", 1)
+	return true
 end
 
 local w, h = term.getSize()
