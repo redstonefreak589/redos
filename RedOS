@@ -1,7 +1,7 @@
 --Variables (For random stuff)
 local yPos = 3
 local xPos = 1
-local currentVersion = "2.0"
+local currentVersion = "2.1"
 local debug = false
 
 --Functions
@@ -91,7 +91,11 @@ function main()
 	sleep(2)
 	term.setCursorPos(1,3)
 	printY("RedOS Login", 2)
-	printY("Username", 3)
+	if fs.exists(".redos/login/user") then
+		printY("Username", 3)
+	else
+		printY("Type in your new Username", 3)
+	end
 	writeY("> ", yPos+1)
 	input = read()
 	if fs.exists(".redos/login/user") then
