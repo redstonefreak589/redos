@@ -35,6 +35,7 @@ function checkForUpdates(updateUrl)
 					downloadFiles("https://raw.github.com/redstonefreak589/redos/master/installer", "/installer")
 				end
 				shell.run("/installer")
+				shell.run("/RedOS/installer")
 			end
 		end
 	end
