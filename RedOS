@@ -1,7 +1,7 @@
 --Variables (For random stuff)
 local yPos = 3
 local xPos = 1
-local currentVersion = "3.01"
+local currentVersion = "3.02"
 local debug = false
 
 --Functions
@@ -77,10 +77,6 @@ end
 
 --Main Code
 function main()
-	if fs.exists(".redos/themes") and fs.isDir(".redos/themes") then
-	else
-		fs.makeDir(".redos/themes")
-	end
 	yPos = 3
 	w, h = term.getSize()
 	setColors(colors.white, colors.cyan)
