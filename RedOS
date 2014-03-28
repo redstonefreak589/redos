@@ -78,6 +78,10 @@ end
 
 --Main Code
 function main()
+	if fs.exists(".redos/themes") and fs.isDir(".redos/themes") then
+	else
+		fs.makeDir(".redos/themes")
+	end
 	yPos = 3
 	w, h = term.getSize()
 	setColors(colors.white, colors.cyan)
