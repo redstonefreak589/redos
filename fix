@@ -1,2 +1,0 @@
-fs.move("startup", "fix")
-fs.move("startup.temp", "startup")
