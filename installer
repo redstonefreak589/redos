@@ -80,6 +80,7 @@ end
 parallel.waitForAny(function() downloadFiles("https://raw.github.com/redstonefreak589/redos/master/RedOS", ".redos/os/RedOS") end, function() load(9) end)
 parallel.waitForAny(function() downloadFiles("https://raw.github.com/redstonefreak589/redos/master/Browser", ".redos/programs/browser") end, function() load(9) end)
 parallel.waitForAny(function() downloadFiles("https://raw.github.com/redstonefreak589/redos/master/desktop", ".redos/os/desktop") end, function() load(9) end)
+parallel.waitForAny(function() downloadFiles("https://raw.github.com/redstonefreak589/redos/master/hasing", ".redos/os/hashing") end, function() load(9) end)
 centerPrint("Download Success!", 9)
 sleep(2)
 term.setCursorPos(1,4)

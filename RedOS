@@ -1,7 +1,7 @@
 --Variables (For random stuff)
 local yPos = 3
 local xPos = 1
-local currentVersion = "3.1.2.2"
+local currentVersion = "3.2"
 local debug = false
 
 --Functions
@@ -77,6 +77,7 @@ end
 
 --Main Code
 function main()
+	os.loadAPI(".redos/os/hashing")
 	if fs.exists(".redos/themes") and fs.isDir(".redos/themes") then
 	else
 		fs.makeDir(".redos/themes")
@@ -115,10 +116,16 @@ function main()
 			writeY("> ", yPos+1)
 			input2 = read("*")
 			if fs.exists(".redos/login/pass") then
-				h = fs.open(".redos/login/pass", "r")
+				--[[h = fs.open(".redos/login/pass", "r")
 				password = h.readAll()
 				h.close()
 				if input2 == password then
+				]]--	
+				hashedPassword = hashing.SHA1(input2)
+				f = fs.open(".redos/login/pass", "r")
+				pass = f.readAll()
+				f.close()
+				if hashedPassword == pass then
 					printY("Login Confirmed! Loading desktop...", yPos+1)
 					sleep(2)
 					if fs.exists(".redos/os/desktop") then
@@ -153,7 +160,7 @@ function main()
 		writeY("> ", yPos+1)
 		newP = read("*")
 		h = fs.open(".redos/login/pass", "w")
-		h.write(newP)
+		h.write(hashing.SHA1(newP))
 		h.close()
 		term.setCursorPos(1,8)
 		term.clearLine()
