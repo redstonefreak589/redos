@@ -1,7 +1,7 @@
 --Variables (For random stuff)
 local yPos = 3
 local xPos = 1
-local currentVersion = "3.2"
+local currentVersion = "3.3"
 local debug = false
 
 --Functions

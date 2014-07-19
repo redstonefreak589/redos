@@ -127,7 +127,7 @@ function changePass()
 	confPass = read("*")
 	if confPass == newPass then
 		h = fs.open(".redos/login/pass", "w")
-		h.write(newPass)
+		h.write(hashing.SHA1(newPass))
 		h.close()
 	else
 		term.setCursorPos(1,3)
@@ -390,10 +390,32 @@ function changeRedosTheme()
 	selectedItem = 1
 end
 
+function showChangeLog()
+	inProgramsMenu = false
+	resetScreen()
+	term.setCursorPos(1,3)
+	term.clearLine()
+	term.setCursorPos(1,4)
+	term.clearLine()
+	term.setCursorPos(1,5)
+	term.clearLine()
+	term.setCursorPos(1,3)
+	print("RedOS Version 3.3")
+	term.setCursorPos(1,5)
+	print("Changelog: \n+Added Changelog Feature \n*Fixed changed passwords not being hashed")
+	term.setCursorPos(1,9)
+	print("Press any key to return to main menu")
+	event, key = os.pullEvent("key")
+	selectedItem = 1
+	resetScreen()
+	main()
+end
+
 programsMenu = {
 	[1] = {text = "File Browser", handler =  explorer},
 	[2] = {text = "Shell", handler = shellRun},
-	[3] = {text = "Back", handler = back}
+	[3] = {text = "Changelog", handler = showChangeLog},
+	[4] = {text = "Back", handler = back}
 }
 
 mainMenu = {
@@ -501,6 +523,7 @@ end
 
 local w, h = term.getSize()
 resetScreen()
+os.loadAPI(".redos/os/hashing")
 main()
 setColors(backgroundColor, textColor, barColor)
 term.setCursorPos(1,1)
